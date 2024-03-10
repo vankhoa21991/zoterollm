@@ -1,11 +1,16 @@
+from dotenv import load_dotenv
+load_dotenv()
 import glob
 import os
 import sqlite3
 from pyzotero import zotero
 from collections import defaultdict
+import argparse
 import pandas as pd
-def zoteroapi():
-    zotero_path = '/home/vankhoa@median.cad/snap/zotero-snap/common/Zotero/storage/'
+from pathlib import Path
+
+
+def zoteroapi(zotero_path=None):
     library_id = os.environ['ZOTERO_USER_ID']
     api_key = os.environ['ZOTERO_KEY']
     library_type = 'user'
@@ -46,42 +51,15 @@ def zoteroapi():
                 raise NotImplementedError
             nrows += 1
     df = pd.DataFrame(results).T
-    df.to_csv('zotero.csv', index=False)
-
-
-
-def zotero_local():
-    zotero_path = '/home/vankhoa@median.cad/snap/zotero-snap/common/Zotero/'
-    # read sqlite file read-only
-    # conn = sqlite3.connect(os.path.expanduser(f'file:{zotero_path}zotero.sqlite?mode=ro'),uri=True )
-    # c = conn.cursor()
-    # sql_query = """SELECT name FROM sqlite_master
-    #   WHERE type='table';"""
-    # c.execute(sql_query)
-    # print(c.fetchall())
-    # # c.execute('SELECT * FROM items')
-    # # for row in c:
-    # #     print(row)
-    #
-    # c.execute('SELECT * FROM itemDataValues')
-    # for row in c:
-    #     print(row)
-
-    results = defaultdict(dict)
-    nrows = 0
-    pdf_files = glob.glob(zotero_path + 'storage/*/*.pdf')
-    # html_files = glob.glob(zotero_path + 'storage/*/*.html')
-    for pdf_file in pdf_files:
-        pdf_file = pdf_file.replace(zotero_path, '')
-        pdf_file = pdf_file.split('/')
-        pdf_file = pdf_file[1]
-        results[nrows] = {
-            'pdf_file': pdf_file,
-            'path': pdf_file,
-        }
-        nrows += 1
+    df.to_csv(Path(os.environ['working_dir']) / 'zotero.csv', index=False)
 
 
 if __name__ == '__main__':
-    zoteroapi()
-    zotero_local()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--zoteropath', type=str,
+                        help='path to zotero storage')
+    args = parser.parse_args()
+
+    os.makedirs(os.environ['working_dir'], exist_ok=True)
+
+    zoteroapi(zotero_path=args.zoteropath)

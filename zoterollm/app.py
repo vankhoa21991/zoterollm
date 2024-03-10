@@ -1,3 +1,6 @@
+import dotenv
+dotenv.load_dotenv()
+import os
 import streamlit as st
 from langchain import PromptTemplate
 from streamlit_chat import message
@@ -11,13 +14,15 @@ st.header('Custom LLM Chatbot :robot_face:')
 @st.cache_resource()
 def load_llm():
     llmodel = LLModel()
-    model = llmodel.load_llm_4bit(model_id='/data/llm/Llama-2-7b-chat-hf/', hf_auth=None, device='cuda:0')
+    model = llmodel.load_llm_4bit(model_id='Llama-2-7b-chat-hf/', 
+                                  hf_auth=None, 
+                                  device='cuda:0')
     # model = llmodel.load_ctransformer()
     return model
 
 @st.cache_resource()
 def load_vector_store():
-    vector_store = VectorStoreFAISS(output_dir="/home/vankhoa@median.cad/code/llm/zoterollm/vectordb/faiss")
+    vector_store = VectorStoreFAISS(output_dir=f"{os.environ['working_dir']}/vectordb/faiss")
     db = vector_store.load_vector_store()
     return db
 

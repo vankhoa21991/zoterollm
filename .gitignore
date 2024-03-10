@@ -9,3 +9,4 @@ models
 vectordb
 zotero.csv
 *.egg-info
+.env

@@ -2,7 +2,11 @@
 __import__('pysqlite3')
 import sys
 sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+import dotenv
+dotenv.load_dotenv()
 import pandas as pd
+import os
+import argparse
 from langchain.document_loaders import DirectoryLoader, TextLoader, PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter, TokenTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -105,8 +109,11 @@ class VectorStoreChromab(VectorStoreFAISS):
         return db
 
 if __name__ == "__main__":
-    csv_file = '../zotero.csv'
+    args = argparse.ArgumentParser()
+    args.add_argument('--csvfile', type=str, help='path to zotero.csv')
+    args = args.parse_args()
+    csv_file =  args.csvfile
 
-    vector_store = VectorStoreFAISS(csv_file, output_dir="../vectordb/faiss")
-    # vector_store = VectorStoreChromab(csv_file, output_dir="../vectordb/chromab")
+    vector_store = VectorStoreFAISS(csv_file, output_dir=f"{os.environ['working_dir']}/vectordb/faiss")
+    # vector_store = VectorStoreChromab(csv_file, output_dir=f"{os.environ['working_dir']}/vectordb/chromab")
     vector_store.create()

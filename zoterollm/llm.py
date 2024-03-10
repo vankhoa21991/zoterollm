@@ -90,9 +90,7 @@ class LLModel:
 
 	def load_ctransformer(self):
 		# load the llm with ctransformers
-		model_path = '/home/vankhoa@median.cad/code/llm/zoterollm/models/llama-2-7b-chat.ggmlv3.q2_K.bin'
-		# model_path = '/data/llm/Llama-2-7b-chat-hf/llama-2-7b-chat-hf.Q4_K_M.gguf'
-		model_path = '/data/llm/llama-2-7b-chat.Q2_K.gguf'
+		model_path = '/media/vankhoa/code/public/Llama-2-7B-Chat-GGUF/llama-2-7b-chat.Q2_K.gguf'
 
 		llm = CTransformers(model=model_path, # model available here: https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/tree/main
 		                model_type='llama',
@@ -123,18 +121,18 @@ if __name__ == '__main__':
 	# print(chain.invoke({"question": question}))
 	# print("Time taken: ", time.time()-t)
 
-	model = llmodel.load_llm_4bit(model_id='/data/llm/Llama-2-7b-chat-hf/', hf_auth=None, device='cuda:0')
-	chain = prompt | model
-
-	chain.invoke({"question": question,
-				  "context": "you are answering questions about large language model"})
-	print("Time taken: ", time.time() - t)
-
-	# model = llmodel.load_ctransformer()
-	# # print(model(question))
-	# # print("Time taken: ", time.time() - t)
+	# model = llmodel.load_llm_4bit(model_id='/data/llm/Llama-2-7b-chat-hf/', hf_auth=None, device='cuda:0')
+	# chain = prompt | model
 	#
-	# llm_chain = LLMChain(prompt=prompt, llm=model)
-	# response = llm_chain.run(question=question,
-	# 						 context="you are answering questions about large language model")
+	# chain.invoke({"question": question,
+	# 			  "context": "you are answering questions about large language model"})
 	# print("Time taken: ", time.time() - t)
+
+	model = llmodel.load_ctransformer()
+	# print(model(question))
+	# print("Time taken: ", time.time() - t)
+
+	llm_chain = LLMChain(prompt=prompt, llm=model)
+	response = llm_chain.run(question=question,
+							 context="you are answering questions about large language model")
+	print("Time taken: ", time.time() - t)

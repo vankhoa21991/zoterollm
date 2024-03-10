@@ -1,0 +1,6 @@
+dotenv
+tranformers
+torch
+langchain
+streamlit
+pandas
